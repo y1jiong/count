@@ -104,7 +104,13 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			g.Log().Error(ctx, err)
 			return
 		}
-	} else {
+		if data.Time.Time.Format("2006-01-02") != gtime.Now().Time.Format("2006-01-02") {
+			data = nil
+			cacheVal = nil
+			_ = cache.Remove(ctx, cacheKey)
+		}
+	}
+	if data == nil {
 		data = &countCache{
 			UserId:  req.UserId,
 			GroupId: req.GroupId,

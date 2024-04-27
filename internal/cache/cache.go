@@ -38,3 +38,15 @@ func Set(ctx context.Context, key any, value any, duration time.Duration) error 
 	}
 	return storeFile(ctx, m)
 }
+
+func Remove(ctx context.Context, key any) error {
+	_, err := cache.Remove(ctx, key)
+	if err != nil {
+		return err
+	}
+	m, err := cache.Data(ctx)
+	if err != nil {
+		return err
+	}
+	return storeFile(ctx, m)
+}
