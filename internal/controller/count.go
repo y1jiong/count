@@ -108,10 +108,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if data == nil {
-		data = &countCache{
-			UserId:  req.UserId,
-			GroupId: req.GroupId,
-		}
+		data = &countCache{}
 	}
 
 	switch {
@@ -120,6 +117,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			respContent = "还没人说过" + service.MapAbbr(ctx, abbr) + "有多少人哦"
 			return
 		}
+
 		respContent = fmt.Sprintf("%v 在 %v 说%v有 %v 人",
 			data.UserId,
 			data.Time.Time.Format("2006-01-02 15:04:05"),
@@ -132,14 +130,19 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			respContent = "真的有这么多人？！"
 			return
 		}
+
+		data.UserId = req.UserId
+		data.GroupId = req.GroupId
 		data.Time = gtime.Now()
+
 		err = cache.Set(ctx, cacheKey, data, data.Time.EndOfDay().Sub(data.Time))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			g.Log().Error(ctx, err)
 			return
 		}
-		respContent = fmt.Sprintf("%v人数加一！现在还有 %v 人",
+
+		respContent = fmt.Sprintf("%v人数加一！现在有 %v 人",
 			service.MapAbbr(ctx, abbr),
 			data.Count,
 		)
@@ -148,15 +151,20 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			respContent = "诶？是不是已经没人排队了"
 			return
 		}
+
 		data.Count--
+		data.UserId = req.UserId
+		data.GroupId = req.GroupId
 		data.Time = gtime.Now()
+
 		err = cache.Set(ctx, cacheKey, data, data.Time.EndOfDay().Sub(data.Time))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			g.Log().Error(ctx, err)
 			return
 		}
-		respContent = fmt.Sprintf("%v人数减一！现在还有 %v 人",
+
+		respContent = fmt.Sprintf("%v人数减一！现在有 %v 人",
 			service.MapAbbr(ctx, abbr),
 			data.Count,
 		)
@@ -171,14 +179,19 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			respContent = "真的有这么多人？！"
 			return
 		}
+
+		data.UserId = req.UserId
+		data.GroupId = req.GroupId
 		data.Time = gtime.Now()
+
 		err = cache.Set(ctx, cacheKey, data, data.Time.EndOfDay().Sub(data.Time))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			g.Log().Error(ctx, err)
 			return
 		}
-		respContent = fmt.Sprintf("%v人数加 %v！现在还有 %v 人",
+
+		respContent = fmt.Sprintf("%v人数加 %v！现在有 %v 人",
 			service.MapAbbr(ctx, abbr),
 			num,
 			data.Count,
@@ -193,15 +206,20 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			respContent = "人数不够减哦"
 			return
 		}
+
 		data.Count -= num
+		data.UserId = req.UserId
+		data.GroupId = req.GroupId
 		data.Time = gtime.Now()
+
 		err = cache.Set(ctx, cacheKey, data, data.Time.EndOfDay().Sub(data.Time))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			g.Log().Error(ctx, err)
 			return
 		}
-		respContent = fmt.Sprintf("%v人数减 %v！现在还有 %v 人",
+
+		respContent = fmt.Sprintf("%v人数减 %v！现在有 %v 人",
 			service.MapAbbr(ctx, abbr),
 			num,
 			data.Count,
@@ -217,14 +235,19 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			respContent = "真的有这么多人？！"
 			return
 		}
+
 		data.Count = num
+		data.UserId = req.UserId
+		data.GroupId = req.GroupId
 		data.Time = gtime.Now()
+
 		err = cache.Set(ctx, cacheKey, data, data.Time.EndOfDay().Sub(data.Time))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			g.Log().Error(ctx, err)
 			return
 		}
+
 		respContent = fmt.Sprintf("我知道%v有 %v 人啦！",
 			service.MapAbbr(ctx, abbr),
 			num,
