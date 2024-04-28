@@ -42,7 +42,6 @@ func Count(w http.ResponseWriter, r *http.Request) {
 	err := json.Unmarshal(body, &req)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		g.Log().Notice(ctx, err)
 		return
 	}
 	var respContent string
@@ -62,13 +61,11 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		openedDuration, err = time.ParseDuration(hourAndMinuteRe.ReplaceAllString(req.OpenedAt, "${1}h${2}m"))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			g.Log().Notice(ctx, err)
 			return
 		}
 		closedDuration, err = time.ParseDuration(hourAndMinuteRe.ReplaceAllString(req.ClosedAt, "${1}h${2}m"))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			g.Log().Notice(ctx, err)
 			return
 		}
 		now := gtime.Now()
@@ -166,7 +163,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 	case strings.HasPrefix(req.Remain, "+"):
 		num := gconv.Int(req.Remain[1:])
 		if num <= 0 {
-			respContent = "啊啊啊，我怎么看不懂你写的是什么"
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 		data.Count += num
@@ -189,7 +186,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 	case strings.HasPrefix(req.Remain, "-"):
 		num := gconv.Int(req.Remain[1:])
 		if num <= 0 {
-			respContent = "啊啊啊，我怎么看不懂你写的是什么"
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 		if data.Count < num {
@@ -213,7 +210,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		var num int
 		num, err = strconv.Atoi(req.Remain)
 		if err != nil {
-			respContent = "啊啊啊，我怎么看不懂你写的是什么"
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 		if req.CountLimit > 0 && num > req.CountLimit {
