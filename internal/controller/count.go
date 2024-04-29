@@ -2,7 +2,6 @@ package controller
 
 import (
 	"count/internal/cache"
-	"count/internal/service"
 	"encoding/json"
 	"fmt"
 	"github.com/gogf/gf/v2/frame/g"
@@ -17,13 +16,14 @@ import (
 )
 
 type countReq struct {
-	UserId     int64  `json:"user_id"`
-	GroupId    int64  `json:"group_id"`
 	Message    string `json:"message"`
 	Remain     string `json:"remain"`
-	CountLimit int    `json:"count_limit"`
 	OpenedAt   string `json:"opened_at"`
 	ClosedAt   string `json:"closed_at"`
+	FullName   string `json:"full_name"`
+	UserId     int64  `json:"user_id"`
+	GroupId    int64  `json:"group_id"`
+	CountLimit int    `json:"count_limit"`
 }
 
 type countCache struct {
@@ -84,6 +84,9 @@ func Count(w http.ResponseWriter, r *http.Request) {
 	req.Remain = strings.TrimSpace(req.Remain)
 
 	abbr := req.Message[0 : len(req.Message)-len(req.Remain)]
+	if req.FullName == "" {
+		req.FullName = abbr
+	}
 
 	cacheKey := "count_" + abbr
 	cacheVal, err := cache.Get(ctx, cacheKey)
@@ -114,14 +117,14 @@ func Count(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case req.Remain == "j":
 		if cacheVal == nil {
-			respContent = "还没人说过" + service.MapAbbr(ctx, abbr) + "有多少人哦"
+			respContent = "还没人说过" + req.FullName + "有多少人哦"
 			return
 		}
 
 		respContent = fmt.Sprintf("%v 在 %v 说%v有 %v 人",
 			data.UserId,
 			data.Time.Time.Format("2006-01-02 15:04:05"),
-			service.MapAbbr(ctx, abbr),
+			req.FullName,
 			data.Count,
 		)
 	case req.Remain == "++":
@@ -143,7 +146,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		}
 
 		respContent = fmt.Sprintf("%v人数加一！现在有 %v 人",
-			service.MapAbbr(ctx, abbr),
+			req.FullName,
 			data.Count,
 		)
 	case req.Remain == "--":
@@ -165,7 +168,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		}
 
 		respContent = fmt.Sprintf("%v人数减一！现在有 %v 人",
-			service.MapAbbr(ctx, abbr),
+			req.FullName,
 			data.Count,
 		)
 	case strings.HasPrefix(req.Remain, "+"):
@@ -192,7 +195,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		}
 
 		respContent = fmt.Sprintf("%v人数加 %v！现在有 %v 人",
-			service.MapAbbr(ctx, abbr),
+			req.FullName,
 			num,
 			data.Count,
 		)
@@ -220,7 +223,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		}
 
 		respContent = fmt.Sprintf("%v人数减 %v！现在有 %v 人",
-			service.MapAbbr(ctx, abbr),
+			req.FullName,
 			num,
 			data.Count,
 		)
@@ -249,7 +252,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		}
 
 		respContent = fmt.Sprintf("我知道%v有 %v 人啦！",
-			service.MapAbbr(ctx, abbr),
+			req.FullName,
 			num,
 		)
 	}

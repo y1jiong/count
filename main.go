@@ -33,10 +33,14 @@ func main() {
 
 	address, err := gcfg.Instance().Get(ctx, "server.address", ":8080")
 	if err != nil {
-		panic(err)
+		g.Log().Error(ctx, err)
+		return
 	}
 
 	g.Log().Info(ctx, "Server running on", address.String())
+	// Route
+	g.Log().Info(ctx, "POST /count/{$}")
+
 	err = http.ListenAndServe(address.String(), mux)
 	if err != nil {
 		return
