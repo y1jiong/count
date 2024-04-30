@@ -18,8 +18,8 @@ import (
 type countReq struct {
 	Message    string `json:"message"`
 	Remain     string `json:"remain"`
-	OpenedAt   string `json:"opened_at"`
-	ClosedAt   string `json:"closed_at"`
+	OpenAt     string `json:"open_at"`
+	CloseAt    string `json:"close_at"`
 	FullName   string `json:"full_name"`
 	UserId     int64  `json:"user_id"`
 	GroupId    int64  `json:"group_id"`
@@ -56,25 +56,25 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	if req.OpenedAt != "" && req.ClosedAt != "" {
-		var openedDuration, closedDuration time.Duration
-		openedDuration, err = time.ParseDuration(hourAndMinuteRe.ReplaceAllString(req.OpenedAt, "${1}h${2}m"))
+	if req.OpenAt != "" && req.CloseAt != "" {
+		var openDuration, closeDuration time.Duration
+		openDuration, err = time.ParseDuration(hourAndMinuteRe.ReplaceAllString(req.OpenAt, "${1}h${2}m"))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		closedDuration, err = time.ParseDuration(hourAndMinuteRe.ReplaceAllString(req.ClosedAt, "${1}h${2}m"))
+		closeDuration, err = time.ParseDuration(hourAndMinuteRe.ReplaceAllString(req.CloseAt, "${1}h${2}m"))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 		now := gtime.Now()
 		nowDuration := now.Sub(now.StartOfDay())
-		if nowDuration < openedDuration {
+		if nowDuration < openDuration {
 			respContent = "早啊，不过现在好像没到点儿诶"
 			return
 		}
-		if nowDuration > closedDuration {
+		if nowDuration > closeDuration {
 			respContent = "不早了，现在好像已经过点儿了诶"
 			return
 		}
