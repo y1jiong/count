@@ -133,14 +133,17 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		respContent = fmt.Sprintf("%v有 %v 人 (%v 分钟前)\n%v 在 %v 说的\n%v",
+		respContent = fmt.Sprintf("%v有 %v 人 (%v 分钟前)\n%v 在 %v 说的",
 			req.FullName,
 			data.Count,
 			gtime.Now().Sub(data.Time).Round(time.Minute).Minutes(),
 			data.UserId,
 			data.Time.Time.Format("2006-01-02 15:04:05"),
-			req.Note,
 		)
+
+		if req.Note != "" {
+			respContent += "\n" + req.Note
+		}
 
 		expectWait := data.Count * req.CostMinutes
 		if req.CostPer > 0 {
