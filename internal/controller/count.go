@@ -59,6 +59,14 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
+	req.Message = strings.TrimSpace(req.Message)
+	req.Remain = strings.TrimSpace(req.Remain)
+
+	abbr := req.Message[0 : len(req.Message)-len(req.Remain)]
+	if req.FullName == "" {
+		req.FullName = abbr
+	}
+
 	if req.OpenAt != "" && req.CloseAt != "" {
 		var openDuration, closeDuration time.Duration
 		openDuration, err = time.ParseDuration(hourAndMinuteRe.ReplaceAllString(req.OpenAt, "${1}h${2}m"))
@@ -74,21 +82,19 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		now := gtime.Now()
 		nowDuration := now.Sub(now.StartOfDay())
 		if nowDuration < openDuration {
-			respContent = "早啊，不过现在好像没到点儿诶"
+			respContent = fmt.Sprintf("早啊，不过现在好像没到点儿诶\n%v%v",
+				req.FullName,
+				req.Note,
+			)
 			return
 		}
 		if nowDuration > closeDuration {
-			respContent = "不早了，现在好像已经过点儿了诶"
+			respContent = fmt.Sprintf("不早了，现在好像已经过点儿了诶\n%v%v",
+				req.FullName,
+				req.Note,
+			)
 			return
 		}
-	}
-
-	req.Message = strings.TrimSpace(req.Message)
-	req.Remain = strings.TrimSpace(req.Remain)
-
-	abbr := req.Message[0 : len(req.Message)-len(req.Remain)]
-	if req.FullName == "" {
-		req.FullName = abbr
 	}
 
 	cacheKey := "count_" + abbr
@@ -142,7 +148,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if expectWait > 0 {
-			respContent += fmt.Sprintf("\n预计等待时间 %v 分钟", expectWait)
+			respContent += fmt.Sprintf("\n预计等待 %v 分钟", expectWait)
 		}
 	case req.Remain == "++":
 		data.Count++
