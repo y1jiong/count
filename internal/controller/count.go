@@ -145,10 +145,11 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			respContent += "\n" + req.Note
 		}
 
-		expectWait := data.Count * req.CostMinutes
+		expectWait := data.Count
 		if req.CostPer > 0 {
 			expectWait /= req.CostPer
 		}
+		expectWait *= req.CostMinutes
 
 		if expectWait > 0 {
 			respContent += fmt.Sprintf("\n预计等待 %v 分钟", expectWait)
