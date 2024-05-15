@@ -22,6 +22,7 @@ type countReq struct {
 	CloseAt     string `json:"close_at"`
 	FullName    string `json:"full_name"`
 	Note        string `json:"note"`
+	Nickname    string `json:"nickname"`
 	UserId      int64  `json:"user_id"`
 	GroupId     int64  `json:"group_id"`
 	CountLimit  int    `json:"count_limit"`
@@ -30,10 +31,11 @@ type countReq struct {
 }
 
 type countCache struct {
-	UserId  int64       `json:"user_id"`
-	GroupId int64       `json:"group_id"`
-	Count   int         `json:"count"`
-	Time    *gtime.Time `json:"time"`
+	Nickname string      `json:"nickname"`
+	UserId   int64       `json:"user_id"`
+	GroupId  int64       `json:"group_id"`
+	Count    int         `json:"count"`
+	Time     *gtime.Time `json:"time"`
 }
 
 var hourAndMinuteRe = regexp.MustCompile(`^(\d{1,2}):(\d{1,2})$`)
@@ -133,10 +135,11 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		respContent = fmt.Sprintf("%v有 %v 人 (%v 分钟前)\n%v 在 %v 说的",
+		respContent = fmt.Sprintf("%v有 %v 人 (%v 分钟前)\n%v(%v) 在 %v 说的",
 			req.FullName,
 			data.Count,
 			gtime.Now().Sub(data.Time).Round(time.Minute).Minutes(),
+			data.Nickname,
 			data.UserId,
 			data.Time.Time.Format("2006-01-02 15:04:05"),
 		)
@@ -161,6 +164,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		data.Nickname = req.Nickname
 		data.UserId = req.UserId
 		data.GroupId = req.GroupId
 		data.Time = gtime.Now()
@@ -183,6 +187,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		}
 
 		data.Count--
+		data.Nickname = req.Nickname
 		data.UserId = req.UserId
 		data.GroupId = req.GroupId
 		data.Time = gtime.Now()
@@ -210,6 +215,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		data.Nickname = req.Nickname
 		data.UserId = req.UserId
 		data.GroupId = req.GroupId
 		data.Time = gtime.Now()
@@ -238,6 +244,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		}
 
 		data.Count -= num
+		data.Nickname = req.Nickname
 		data.UserId = req.UserId
 		data.GroupId = req.GroupId
 		data.Time = gtime.Now()
@@ -267,6 +274,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		}
 
 		data.Count = num
+		data.Nickname = req.Nickname
 		data.UserId = req.UserId
 		data.GroupId = req.GroupId
 		data.Time = gtime.Now()
