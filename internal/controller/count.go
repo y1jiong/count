@@ -38,7 +38,10 @@ type countCache struct {
 	Time     *gtime.Time `json:"time"`
 }
 
-var hourAndMinuteRe = regexp.MustCompile(`^(\d{1,2}):(\d{1,2})$`)
+var (
+	hourAndMinuteRe    = regexp.MustCompile(`^(\d{1,2}):(\d{1,2})$`)
+	remainValidationRe = regexp.MustCompile(`^(?:j|几|\+\+|--|\+\d+|-\d+|\d+)$`)
+)
 
 func Count(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -61,9 +64,14 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	req.Message = strings.TrimSpace(req.Message)
 	req.Remain = strings.TrimSpace(req.Remain)
 
+	if !remainValidationRe.MatchString(req.Remain) {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	req.Message = strings.TrimSpace(req.Message)
 	abbr := req.Message[0 : len(req.Message)-len(req.Remain)]
 	if req.FullName == "" {
 		req.FullName = abbr
