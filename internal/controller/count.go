@@ -20,6 +20,7 @@ type countReq struct {
 	Remain      string `json:"remain"`
 	OpenAt      string `json:"open_at"`
 	CloseAt     string `json:"close_at"`
+	ResetAt     string `json:"reset_at"`
 	FullName    string `json:"full_name"`
 	Note        string `json:"note"`
 	Nickname    string `json:"nickname"`
@@ -78,27 +79,27 @@ func Count(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if req.OpenAt != "" && req.CloseAt != "" {
-		var openDuration, closeDuration time.Duration
-		openDuration, err = time.ParseDuration(hourAndMinuteRe.ReplaceAllString(req.OpenAt, "${1}h${2}m"))
+		var openDur, closeDur time.Duration
+		openDur, err = time.ParseDuration(hourAndMinuteRe.ReplaceAllString(req.OpenAt, "${1}h${2}m"))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		closeDuration, err = time.ParseDuration(hourAndMinuteRe.ReplaceAllString(req.CloseAt, "${1}h${2}m"))
+		closeDur, err = time.ParseDuration(hourAndMinuteRe.ReplaceAllString(req.CloseAt, "${1}h${2}m"))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 		now := gtime.Now()
-		nowDuration := now.Sub(now.StartOfDay())
-		if nowDuration < openDuration {
+		nowDur := now.Sub(now.StartOfDay())
+		if nowDur < openDur {
 			respContent = fmt.Sprintf("早啊，不过现在好像没到点儿诶\n%v%v",
 				req.FullName,
 				req.Note,
 			)
 			return
 		}
-		if nowDuration > closeDuration {
+		if nowDur > closeDur {
 			respContent = fmt.Sprintf("不早了，现在好像已经过点儿了诶\n%v%v",
 				req.FullName,
 				req.Note,
@@ -123,10 +124,20 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			g.Log().Error(ctx, err)
 			return
 		}
-		if data.Time.Time.Format("2006-01-02") != gtime.Now().Time.Format("2006-01-02") {
-			data = nil
-			cacheVal = nil
-			_ = cache.Remove(ctx, cacheKey)
+		if req.ResetAt != "" {
+			var resetDur time.Duration
+			resetDur, err = time.ParseDuration(hourAndMinuteRe.ReplaceAllString(req.ResetAt, "${1}h${2}m"))
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+			now := gtime.Now()
+			resetTime := now.StartOfDay().Add(resetDur)
+			if now.After(resetTime) && data.Time.Before(resetTime) {
+				data = nil
+				cacheVal = nil
+				_ = cache.Remove(ctx, cacheKey)
+			}
 		}
 	}
 	if data == nil {
