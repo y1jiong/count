@@ -16,19 +16,19 @@ import (
 )
 
 type countReq struct {
-	Message     string `json:"message"`
-	Remain      string `json:"remain"`
-	OpenAt      string `json:"open_at"`
-	CloseAt     string `json:"close_at"`
-	ResetAt     string `json:"reset_at"`
-	FullName    string `json:"full_name"`
-	Note        string `json:"note"`
-	Nickname    string `json:"nickname"`
-	UserId      int64  `json:"user_id"`
-	GroupId     int64  `json:"group_id"`
-	CountLimit  int    `json:"count_limit"`
-	CostMinutes int    `json:"cost_minutes"`
-	CostPer     int    `json:"cost_per"`
+	Message    string `json:"message"`
+	Remain     string `json:"remain"`
+	OpenAt     string `json:"open_at"`
+	CloseAt    string `json:"close_at"`
+	ResetAt    string `json:"reset_at"`
+	FullName   string `json:"full_name"`
+	Note       string `json:"note"`
+	Nickname   string `json:"nickname"`
+	UserId     int64  `json:"user_id"`
+	GroupId    int64  `json:"group_id"`
+	CountLimit int    `json:"count_limit"`
+	CostMinute int    `json:"cost_minute"`
+	CostPer    int    `json:"cost_per"`
 }
 
 type countCache struct {
@@ -171,7 +171,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		if req.CostPer > 0 {
 			expectWait /= req.CostPer
 		}
-		expectWait *= req.CostMinutes
+		expectWait *= req.CostMinute
 
 		if expectWait > 0 {
 			respContent += fmt.Sprintf("\n预计等待 %v 分钟", expectWait)
