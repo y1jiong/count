@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	versionFlag   = flag.BoolP("version", "v", false, "查看当前版本后退出")
+	versionFlag   = flag.BoolP("version", "V", false, "查看当前版本后退出")
 	installFlag   = flag.BoolP("install", "I", false, "安装服务并退出")
 	uninstallFlag = flag.BoolP("uninstall", "U", false, "卸载服务并退出")
 )
@@ -43,6 +43,7 @@ func main() {
 
 	err = http.ListenAndServe(address.String(), mux)
 	if err != nil {
+		g.Log().Error(ctx, err)
 		return
 	}
 }
