@@ -145,7 +145,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 	}
 
 	switch {
-	case req.Remain == "j", req.Remain == "几":
+	case req.Remain == "j", req.Remain == "几", req.Remain == "几个":
 		if cacheVal == nil {
 			respContent = fmt.Sprintf("还没人说过%v有多少人哦", req.FullName)
 			if req.Note != "" {
