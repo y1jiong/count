@@ -116,6 +116,15 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var resetDur time.Duration
+	if req.ResetAt != "" {
+		resetDur, err = time.ParseDuration(hourAndMinuteRe.ReplaceAllString(req.ResetAt, "${1}h${2}m"))
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+	}
+
 	var data *countCache
 	if cacheVal != nil {
 		err = cacheVal.Scan(&data)
@@ -125,12 +134,6 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if req.ResetAt != "" {
-			var resetDur time.Duration
-			resetDur, err = time.ParseDuration(hourAndMinuteRe.ReplaceAllString(req.ResetAt, "${1}h${2}m"))
-			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				return
-			}
 			now := gtime.Now()
 			resetTime := now.StartOfDay().Add(resetDur)
 			if now.After(resetTime) && data.Time.Before(resetTime) {
@@ -188,7 +191,8 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		data.GroupId = req.GroupId
 		data.Time = gtime.Now()
 
-		err = cache.Set(ctx, cacheKey, data, data.Time.EndOfDay().Sub(data.Time))
+		err = cache.Set(ctx, cacheKey, data,
+			data.Time.AddDate(0, 0, 1).StartOfDay().Add(resetDur).Sub(data.Time))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			g.Log().Error(ctx, err)
@@ -211,7 +215,8 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		data.GroupId = req.GroupId
 		data.Time = gtime.Now()
 
-		err = cache.Set(ctx, cacheKey, data, data.Time.EndOfDay().Sub(data.Time))
+		err = cache.Set(ctx, cacheKey, data,
+			data.Time.AddDate(0, 0, 1).StartOfDay().Add(resetDur).Sub(data.Time))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			g.Log().Error(ctx, err)
@@ -239,7 +244,8 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		data.GroupId = req.GroupId
 		data.Time = gtime.Now()
 
-		err = cache.Set(ctx, cacheKey, data, data.Time.EndOfDay().Sub(data.Time))
+		err = cache.Set(ctx, cacheKey, data,
+			data.Time.AddDate(0, 0, 1).StartOfDay().Add(resetDur).Sub(data.Time))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			g.Log().Error(ctx, err)
@@ -268,7 +274,8 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		data.GroupId = req.GroupId
 		data.Time = gtime.Now()
 
-		err = cache.Set(ctx, cacheKey, data, data.Time.EndOfDay().Sub(data.Time))
+		err = cache.Set(ctx, cacheKey, data,
+			data.Time.AddDate(0, 0, 1).StartOfDay().Add(resetDur).Sub(data.Time))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			g.Log().Error(ctx, err)
@@ -298,7 +305,8 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		data.GroupId = req.GroupId
 		data.Time = gtime.Now()
 
-		err = cache.Set(ctx, cacheKey, data, data.Time.EndOfDay().Sub(data.Time))
+		err = cache.Set(ctx, cacheKey, data,
+			data.Time.AddDate(0, 0, 1).StartOfDay().Add(resetDur).Sub(data.Time))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			g.Log().Error(ctx, err)
