@@ -65,17 +65,16 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	req.Remain = strings.TrimSpace(req.Remain)
-
-	if !remainValidationRe.MatchString(req.Remain) {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
 	req.Message = strings.TrimSpace(req.Message)
 	abbr := req.Message[0 : len(req.Message)-len(req.Remain)]
 	if req.FullName == "" {
 		req.FullName = abbr
+	}
+
+	req.Remain = strings.TrimSpace(req.Remain)
+	if !remainValidationRe.MatchString(req.Remain) {
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	if req.OpenAt != "" && req.CloseAt != "" {

@@ -40,9 +40,12 @@ func Set(ctx context.Context, key any, value any, duration time.Duration) error 
 }
 
 func Remove(ctx context.Context, key any) error {
-	_, err := cache.Remove(ctx, key)
+	val, err := cache.Remove(ctx, key)
 	if err != nil {
 		return err
+	}
+	if val.IsEmpty() {
+		return nil
 	}
 	m, err := cache.Data(ctx)
 	if err != nil {
