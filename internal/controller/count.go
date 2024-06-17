@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"count/internal/cache"
+	"count/internal/service/cache"
 	"encoding/json"
 	"fmt"
 	"github.com/gogf/gf/v2/frame/g"
