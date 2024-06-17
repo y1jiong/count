@@ -4,7 +4,7 @@ import (
 	"context"
 	"count/internal/consts"
 	"count/internal/controller"
-	"count/internal/install"
+	"count/internal/service/install"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcfg"
 	flag "github.com/spf13/pflag"

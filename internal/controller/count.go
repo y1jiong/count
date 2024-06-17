@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"count/internal/cache"
+	"count/internal/service/cache"
 	"encoding/json"
 	"fmt"
 	"github.com/gogf/gf/v2/frame/g"
@@ -42,7 +42,7 @@ type countCache struct {
 
 var (
 	hourAndMinuteRe = regexp.MustCompile(`^(\d{1,2}):(\d{1,2})$`)
-	remainExtractRe = regexp.MustCompile(`^(j|几个?|\+\+|--|[+-]\d+|\d+)(?:[，,]([\s\S]+))?$`)
+	remainExtractRe = regexp.MustCompile(`^(j|几个?|\+\+|--|[+-]?\d+)(?:[，,]([\s\S]+))?$`)
 )
 
 func Count(w http.ResponseWriter, r *http.Request) {
