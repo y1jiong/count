@@ -186,7 +186,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		}
 
 		expectWait := data.Count
-		if req.CostPer > 0 {
+		if req.CostPer > 1 {
 			expectWait /= req.CostPer
 		}
 		expectWait *= req.CostMinute
