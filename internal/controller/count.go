@@ -49,12 +49,9 @@ func Count(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	body, _ := io.ReadAll(r.Body)
 	var req *countReq
-	{
-		err := json.Unmarshal(body, &req)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
+	if err := json.Unmarshal(body, &req); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 	var respContent string
 	defer func() {
