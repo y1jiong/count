@@ -155,7 +155,11 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		data = &countCache{}
 	}
 
-	const modSuccessText = "\n可以在命令后面加逗号(，)写上你想加的备注哦~"
+	const (
+		remindMessageText             = "\n可以在命令后面加逗号(，)写上你想加的备注哦~"
+		leaveMessageSuccessTextPrefix = "\n嗷呜！我会转达"
+		leaveMessageSuccessTextSuffix = "的！"
+	)
 
 	switch {
 	case cmd == "j", cmd == "几", cmd == "几个":
@@ -218,7 +222,12 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			req.FullName,
 			data.Count,
 		)
-		respContent += modSuccessText
+
+		if msg == "" {
+			respContent += remindMessageText
+		} else {
+			respContent += leaveMessageSuccessTextPrefix + msg + leaveMessageSuccessTextSuffix
+		}
 	case cmd == "--":
 		if data.Count <= 0 {
 			respContent = "诶？是不是已经没人排队了"
@@ -244,7 +253,12 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			req.FullName,
 			data.Count,
 		)
-		respContent += modSuccessText
+
+		if msg == "" {
+			respContent += remindMessageText
+		} else {
+			respContent += leaveMessageSuccessTextPrefix + msg + leaveMessageSuccessTextSuffix
+		}
 	case strings.HasPrefix(cmd, "+"):
 		num := gconv.Int(cmd[1:])
 		if num <= 0 {
@@ -276,7 +290,12 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			num,
 			data.Count,
 		)
-		respContent += modSuccessText
+
+		if msg == "" {
+			respContent += remindMessageText
+		} else {
+			respContent += leaveMessageSuccessTextPrefix + msg + leaveMessageSuccessTextSuffix
+		}
 	case strings.HasPrefix(cmd, "-"):
 		num := gconv.Int(cmd[1:])
 		if num <= 0 {
@@ -308,7 +327,12 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			num,
 			data.Count,
 		)
-		respContent += modSuccessText
+
+		if msg == "" {
+			respContent += remindMessageText
+		} else {
+			respContent += leaveMessageSuccessTextPrefix + msg + leaveMessageSuccessTextSuffix
+		}
 	default:
 		num, err := strconv.Atoi(cmd)
 		if err != nil {
@@ -339,6 +363,11 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			req.FullName,
 			num,
 		)
-		respContent += modSuccessText
+
+		if msg == "" {
+			respContent += remindMessageText
+		} else {
+			respContent += leaveMessageSuccessTextPrefix + msg + leaveMessageSuccessTextSuffix
+		}
 	}
 }
