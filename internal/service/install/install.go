@@ -38,8 +38,7 @@ func Install(ctx context.Context) (err error) {
 			"RestartSec=2\n\n" +
 			"[Install]\n" +
 			"WantedBy=multi-user.target\n")
-	err = os.WriteFile(installPath, serviceContent, 0600)
-	if err != nil {
+	if err = os.WriteFile(installPath, serviceContent, 0600); err != nil {
 		return
 	}
 	g.Log().Notice(ctx, "安装服务成功\n可以使用 systemctl 管理 "+consts.ProjName+" 服务了")
@@ -50,8 +49,7 @@ func Uninstall(ctx context.Context) (err error) {
 	if isWindows() {
 		return errors.New("windows 暂不支持安装到系统")
 	}
-	err = os.Remove(installPath)
-	if err != nil {
+	if err = os.Remove(installPath); err != nil {
 		return
 	}
 	g.Log().Notice(ctx, "卸载服务成功")
