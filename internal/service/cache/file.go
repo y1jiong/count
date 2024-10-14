@@ -18,10 +18,11 @@ func loadFile(ctx context.Context) map[any]any {
 		return nil
 	}
 	var m map[string]any
-	err = json.Unmarshal(content, &m)
+	if err = json.Unmarshal(content, &m); err != nil {
+		return nil
+	}
 	var mm map[any]any
-	err = gconv.Scan(m, &mm)
-	if err != nil {
+	if err = gconv.Scan(m, &mm); err != nil {
 		return nil
 	}
 	return mm

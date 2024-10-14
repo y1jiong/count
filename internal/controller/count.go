@@ -134,8 +134,7 @@ func Count(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if cacheVal != nil {
-			err = cacheVal.Scan(&data)
-			if err != nil {
+			if err = cacheVal.Scan(&data); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				g.Log().Error(ctx, err)
 				return

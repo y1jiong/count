@@ -18,7 +18,8 @@ func Get(ctx context.Context, key any) (*gvar.Var, error) {
 	if val == nil {
 		m := loadFile(ctx)
 		now := gtime.Now()
-		err = cache.SetMap(ctx, m, now.AddDate(0, 0, 1).EndOfDay().Sub(now))
+		err = cache.SetMap(ctx, m,
+			now.AddDate(0, 0, 1).EndOfDay().Sub(now))
 		if err != nil {
 			return nil, err
 		}

@@ -41,8 +41,7 @@ func main() {
 	// Route
 	g.Log().Info(ctx, "POST /count/{$}")
 
-	err = http.ListenAndServe(address.String(), mux)
-	if err != nil {
+	if err = http.ListenAndServe(address.String(), mux); err != nil {
 		g.Log().Error(ctx, err)
 		return
 	}
@@ -52,18 +51,13 @@ func doFlag(ctx context.Context) (exit bool, err error) {
 	flag.Parse()
 	if *versionFlag {
 		consts.PrintVersion()
-		exit = true
-		return
+		return true, nil
 	}
 	if *installFlag {
-		err = install.Install(ctx)
-		exit = true
-		return
+		return true, install.Install(ctx)
 	}
 	if *uninstallFlag {
-		err = install.Uninstall(ctx)
-		exit = true
-		return
+		return true, install.Uninstall(ctx)
 	}
 	return
 }
