@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
+	"count/internal/cfg"
 	"count/internal/consts"
 	"count/internal/controller"
 	"count/internal/service/install"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gcfg"
 	flag "github.com/spf13/pflag"
 	"net/http"
 )
@@ -31,17 +31,13 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /count/{$}", controller.Count)
 
-	address, err := gcfg.Instance().Get(ctx, "server.address", ":8080")
-	if err != nil {
-		g.Log().Error(ctx, err)
-		return
-	}
+	address := cfg.GetServerAddress(ctx)
 
-	g.Log().Info(ctx, "Server running on", address.String())
+	g.Log().Info(ctx, "Server running on", address)
 	// Route
 	g.Log().Info(ctx, "POST /count/{$}")
 
-	if err = http.ListenAndServe(address.String(), mux); err != nil {
+	if err = http.ListenAndServe(address, mux); err != nil {
 		g.Log().Error(ctx, err)
 		return
 	}

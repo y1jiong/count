@@ -2,18 +2,14 @@ package cache
 
 import (
 	"context"
+	"count/internal/cfg"
 	"encoding/json"
-	"github.com/gogf/gf/v2/os/gcfg"
 	"github.com/gogf/gf/v2/util/gconv"
 	"os"
 )
 
 func loadFile(ctx context.Context) map[any]any {
-	val, err := gcfg.Instance().Get(ctx, "cache.file", "cache.json")
-	if err != nil {
-		return nil
-	}
-	content, err := os.ReadFile(val.String())
+	content, err := os.ReadFile(cfg.GetCacheFilePath(ctx))
 	if err != nil {
 		return nil
 	}
@@ -29,13 +25,9 @@ func loadFile(ctx context.Context) map[any]any {
 }
 
 func storeFile(ctx context.Context, m map[any]any) error {
-	val, err := gcfg.Instance().Get(ctx, "cache.file", "cache.json")
-	if err != nil {
-		return err
-	}
 	content, err := json.Marshal(gconv.Map(m))
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(val.String(), content, 0644)
+	return os.WriteFile(cfg.GetCacheFilePath(ctx), content, 0644)
 }
