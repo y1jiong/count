@@ -210,7 +210,8 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		data.Time = gtime.Now()
 
 		err := cache.Set(ctx, cacheKey, data,
-			data.Time.AddDate(0, 0, 1).StartOfDay().Add(resetDur).Sub(data.Time))
+			data.Time.AddDate(0, 0, 1).StartOfDay().Add(resetDur).Sub(data.Time),
+		)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			g.Log().Error(ctx, err)
@@ -241,7 +242,8 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		data.Time = gtime.Now()
 
 		err := cache.Set(ctx, cacheKey, data,
-			data.Time.AddDate(0, 0, 1).StartOfDay().Add(resetDur).Sub(data.Time))
+			data.Time.AddDate(0, 0, 1).StartOfDay().Add(resetDur).Sub(data.Time),
+		)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			g.Log().Error(ctx, err)
@@ -277,7 +279,8 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		data.Time = gtime.Now()
 
 		err := cache.Set(ctx, cacheKey, data,
-			data.Time.AddDate(0, 0, 1).StartOfDay().Add(resetDur).Sub(data.Time))
+			data.Time.AddDate(0, 0, 1).StartOfDay().Add(resetDur).Sub(data.Time),
+		)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			g.Log().Error(ctx, err)
@@ -314,7 +317,8 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		data.Time = gtime.Now()
 
 		err := cache.Set(ctx, cacheKey, data,
-			data.Time.AddDate(0, 0, 1).StartOfDay().Add(resetDur).Sub(data.Time))
+			data.Time.AddDate(0, 0, 1).StartOfDay().Add(resetDur).Sub(data.Time),
+		)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			g.Log().Error(ctx, err)
@@ -351,7 +355,8 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		data.Time = gtime.Now()
 
 		err = cache.Set(ctx, cacheKey, data,
-			data.Time.AddDate(0, 0, 1).StartOfDay().Add(resetDur).Sub(data.Time))
+			data.Time.AddDate(0, 0, 1).StartOfDay().Add(resetDur).Sub(data.Time),
+		)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			g.Log().Error(ctx, err)
