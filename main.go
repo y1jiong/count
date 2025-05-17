@@ -33,8 +33,7 @@ func main() {
 
 	address := cfg.GetServerAddress(ctx)
 
-	g.Log().Info(ctx, "Server running on", address)
-	// Route
+	g.Log().Info(ctx, "http server started listening on", address)
 	g.Log().Info(ctx, "POST /count/{$}")
 
 	if err = http.ListenAndServe(address, mux); err != nil {
