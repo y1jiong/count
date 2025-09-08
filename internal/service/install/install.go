@@ -4,9 +4,10 @@ import (
 	"context"
 	"count/internal/consts"
 	"errors"
-	"github.com/gogf/gf/v2/frame/g"
 	"os"
 	"runtime"
+
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 const (
@@ -21,25 +22,32 @@ func Install(ctx context.Context) (err error) {
 	if isWindows() {
 		return errors.New("windows 暂不支持安装到系统")
 	}
-	// 注册系统服务
+
 	wd, err := os.Getwd()
 	if err != nil {
 		return
 	}
+	exe, err := os.Executable()
+	if err != nil {
+		return
+	}
+
 	serviceContent := []byte(
 		"[Unit]\n" +
 			"Description=" + consts.ProjName + " Service\n" +
+			"Wants=network-online.target\n" +
 			"After=network-online.target\n\n" +
 			"[Service]\n" +
 			"Type=simple\n" +
 			"WorkingDirectory=" + wd +
-			"\nExecStart=" + wd + "/" + consts.ProjName +
+			"\nExecStart=" + exe +
 			"\nRestart=on-failure\n" +
-			"RestartSec=2\n\n" +
+			"RestartSec=2\n" +
+			"LimitNOFILE=65535\n\n" +
 			"[Install]\n" +
 			"WantedBy=multi-user.target\n",
 	)
-	if err = os.WriteFile(installPath, serviceContent, 0600); err != nil {
+	if err = os.WriteFile(installPath, serviceContent, 0o644); err != nil {
 		return
 	}
 	g.Log().Notice(ctx, "安装服务成功\n可以使用 systemctl 管理", consts.ProjName, "服务了")
@@ -50,6 +58,7 @@ func Uninstall(ctx context.Context) (err error) {
 	if isWindows() {
 		return errors.New("windows 暂不支持安装到系统")
 	}
+
 	if err = os.Remove(installPath); err != nil {
 		return
 	}
