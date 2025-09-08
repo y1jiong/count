@@ -4,8 +4,9 @@ import (
 	"context"
 	"count/internal/cfg"
 	"encoding/json"
-	"github.com/gogf/gf/v2/util/gconv"
 	"os"
+
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 func loadFile(ctx context.Context) map[any]any {
@@ -29,5 +30,5 @@ func storeFile(ctx context.Context, m map[any]any) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(cfg.GetCacheFilePath(ctx), content, 0644)
+	return os.WriteFile(cfg.GetCacheFilePath(ctx), content, 0o644)
 }
