@@ -1,8 +1,9 @@
 package consts
 
 import (
-	"github.com/gogf/gf/v2"
 	"runtime"
+
+	"github.com/gogf/gf/v2"
 )
 
 const (

@@ -4,15 +4,17 @@ import (
 	"count/internal/service/cache"
 	"encoding/json"
 	"fmt"
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gtime"
-	"github.com/gogf/gf/v2/util/gconv"
 	"io"
 	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/grand"
 )
 
 type countReq struct {
@@ -369,7 +371,9 @@ func Count(w http.ResponseWriter, r *http.Request) {
 		)
 
 		if msg == "" {
-			respContent += remindMessageText
+			if grand.MeetProb(0.375) {
+				respContent += remindMessageText
+			}
 		} else {
 			respContent += leaveMessageSuccessTextPrefix + msg + leaveMessageSuccessTextSuffix
 		}

@@ -2,10 +2,11 @@ package cache
 
 import (
 	"context"
+	"time"
+
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/os/gcache"
 	"github.com/gogf/gf/v2/os/gtime"
-	"time"
 )
 
 var cache = gcache.New()
